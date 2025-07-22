@@ -1,0 +1,105 @@
+{
+  "name": "Task1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "feedback",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "0ed9949c-21d9-4570-8110-a711223c8163",
+      "name": "Webhook",
+      "webhookId": "50360f31-560f-4d7f-b303-bc131005cfb2"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Junaid Mart<junaidasifdev@gmail.com>",
+        "toEmail": "={{ $('Webhook').item.json.body.data.fields[1].value }}",
+        "subject": "Thanks for your feedback!",
+        "html": "=<p>Dear {{ $('Webhook').item.json.body.data.fields[0].value }},</p>\n\n<p>{{ $json[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"] }}</p>\n\n<p>Warm regards,<br>\nJunaid Mart</p>\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        -32
+      ],
+      "id": "ab61c48f-9766-42a2-9c00-3af6b540561a",
+      "name": "Send email",
+      "webhookId": "8e36e351-1e25-4700-bd4f-0315cd0d7fec",
+      "credentials": {
+        "smtp": {
+          "id": "fuv6UAvJhGqRMX6i",
+          "name": "SMTP account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDLPxLX5vHuqBGhssHNnV0qnRcACSIHfkk",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"The customer gave the following feedback:\\n\\n\\\"{{$json[\"body\"][\"data\"][\"fields\"].find(f => f.label === \"Please share your feedback about our product:\").value}}\\\"\\n\\nPlease write a short, friendly, and polite email body, not a subject, addressing both any positive and negative points. Keep it simple and ready to send directly, no explanations or multiple options, just the email body text.\"\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        -32
+      ],
+      "id": "54e270d2-ccab-46fa-b717-e37fde8b89ab",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3886a139-538a-449c-a2f6-a8bcfbd2b593",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b7b579e93e8f1efb05367422b82aac38096d75b3aeebd3d3ed62969dced6db0"
+  },
+  "id": "N8mUJ8BGfjSpaORw",
+  "tags": []
+}
